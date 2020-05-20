@@ -286,7 +286,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
                                            + '  crcSize: ' + str(header.crcSize)
                                            + ' size of header: ' + str(sizeof(header)))
                     # print('  resv0: ', str(header.resv0))
-                    self.LogBrowser.append("resv0 " + str(header.resv0))
+                    self.LogBrowser.append("resv0: " + str(header.resv0))
                     self.print_as_hex('nonce', header.nonce)
                     self.print_as_hex('auth', header.auth)
                     self.print_as_hex('resv1', header.resv1)
@@ -444,19 +444,19 @@ class SerialThread(QThread):  # 线程类
     def set_host_mcu(self, ebl_mode, delay_factor):
 
         if self.set_host_operating_mode(ebl_mode) != 0:
-            self.my_signal.emit('Unable to set mode of host to app or bootloader')
+            self.my_signal.emit('<font color=\"#ff4040\">' + 'Unable to set mode of host to app or bootloader')
             return False
 
         if self.disable_echo() != 0:
-            self.my_signal.emit('Unable to disable echo mode. Communication failed...')
+            self.my_signal.emit('<font color=\"#ff4040\">' + 'Unable to disable echo mode. Communication failed...')
             return False
 
         if self.set_host_ebl_mode(ebl_mode) != 0:
-            self.my_signal.emit('Unable to set EBL mode in host')
+            self.my_signal.emit('<font color=\"#ff4040\">' + 'Unable to set EBL mode in host')
             return False
 
         if self.set_host_delay_factor(delay_factor) != 0:
-            self.my_signal.emit('Unable to set EBL mode in host')
+            self.my_signal.emit('<font color=\"#ff4040\">' + 'Unable to set EBL mode in host')
             return False
 
         return True
@@ -487,7 +487,7 @@ class SerialThread(QThread):  # 线程类
         ret = self.send_str_cmd('set_host_opmode ' + str(ebl_mode) + '\n')
         # print(ret[0])
         if ret[0] == 0:
-            self.my_signal.emit('Set host to app or bootloader ' + str(ebl_mode))
+            self.my_signal.emit('<font color=\"#228b22\">' + 'Set host to app or bootloader ' + str(ebl_mode))
         time.sleep(0.6)
         return ret[0]
 
@@ -519,11 +519,11 @@ class SerialThread(QThread):  # 线程类
                 return [-1, {}]
             if out > 0:
                 data = self.ser.read(out)
-                print(data)
+                # print(data)
                 length = len(data)
-                print(' len: ' + str(length))
+                # print(' len: ' + str(length))
                 if length < 2:
-                    print('length < 2')
+                    # print('length < 2')
                     self.my_signal.emit('TRY AGAIN... send_str_cmd failed. cmd: ' + str(cmd, 'utf-8') + ' len: ' + str(length))
                     continue
                     # return [-2, {}]
@@ -638,9 +638,9 @@ class SerialThread(QThread):  # 线程类
                 self.my_signal.emit("Flashing " + str(i) + "/" + str(num_pages) + " page...")
                 ret = self.download_page(i)
                 if ret == 0:
-                    self.my_signal.emit("[DONE]")
+                    self.my_signal.emit('<font color=\"#228b22\">' + '[DONE]')
                 else:
-                    self.my_signal.emit("[FAILED]... err: " + str(ret))
+                    self.my_signal.emit('<font color=\"#ff4040\">' + '[FAILED]... err: ' + str(ret))
                     return
 
             self.my_signal.emit('Flashing MSBL file succeed...')
@@ -657,7 +657,7 @@ class SerialThread(QThread):  # 线程类
 
             self.my_signal.emit('<font color=\"#228b22\">' + 'SUCCEED...')
             self.working = False
-            self.terminate()
+            # self.terminate()
 
 
 if __name__ == "__main__":
