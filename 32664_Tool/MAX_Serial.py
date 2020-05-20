@@ -10,7 +10,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 # from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 # from PyQt5.QtCore import QFile, QDataStream, QIODevice, QPoint
-from PyQt5.QtCore import QThread, pyqtSignal
+# from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
 # from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 from PyQt5.QtWidgets import QFileDialog
@@ -142,7 +142,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionExit.triggered.connect(self.exit_tool)
         self.actionOpen_File.triggered.connect(self.read_msbl_file)
         self.actionSaveLog.triggered.connect(self.save_log)
-        self.actionHelp.triggered.connect(self.show_about)
+        # self.actionHelp.triggered.connect(self.show_about)
 
         # self.LogBrowser.document().setMaximumBlockCount(100)
 
@@ -156,11 +156,13 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         if com_is_open and file_is_open:
             if self.SendButton.text() == '发送文件':
                 self.SendButton.setText('停止发送')
+                self.OpenPortButton.setEnabled(False)
                 # 启动线程
                 self.my_thread.working = True
                 self.my_thread.start()
             else:
                 self.SendButton.setText('发送文件')
+                self.OpenPortButton.setEnabled(True)
                 self.my_thread.working = False
                 self.my_thread.terminate()
 
@@ -203,6 +205,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ParityCB.setEnabled(False)
                     self.StopBitCB.setEnabled(False)
                     self.FloCtrlCB.setEnabled(False)
+                    self.ScanPortButton.setEnabled(False)
                     self.OpenPortButton.setText("关闭串口")
                     # self.LogBrowser.append(self.ser.name + ' is open...')
                     com_is_open = 1
@@ -223,6 +226,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ParityCB.setEnabled(True)
             self.StopBitCB.setEnabled(True)
             self.FloCtrlCB.setEnabled(True)
+            self.ScanPortButton.setEnabled(True)
             # self.LogBrowser.append(self.ser.name + ' is closed...')
             com_is_open = 0
 
@@ -261,7 +265,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         global file_is_open
         total_size = 0
         msblfile_name = QFileDialog.getOpenFileName(self, '选择文件', './', 'msbl文件(*.msbl)')
-        print(msblfile_name)
+        # print(msblfile_name)
         msblfile_name_path = msblfile_name[0]
         if msblfile_name_path != '':
             header = MsblHeader()
@@ -269,7 +273,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.LogBrowser.setPlainText('Open File: ' + msblfile_name_path)
             self.FileLineEdit.setText(msblfile_name_path)
             self.LogBrowser.append('Open File: ' + msblfile_name_path)
-            print("msblfile_name_path is not None")
+            # print("msblfile_name_path is not None")
             with open(msblfile_name_path, 'rb') as f:
                 # header = f.read(sizeof(header))
                 if f.readinto(header) == sizeof(header):
@@ -309,13 +313,14 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
                 boot_mem_page = i - 1
                 total_size = total_size + sizeof(self.msbl.crc32)
                 self.LogBrowser.append('Total file size: ' + str(total_size) + ' CRC32: ' + hex(self.msbl.crc32.val))
-                self.LogBrowser.append('\n Reading msbl file succeed.')
+                self.LogBrowser.append('<font color=\"#228b22\">' + '\n Reading msbl file succeed.')
                 file_is_open = 1
 
             f.close()
         else:
-            print("msblfile_name_path is None")
-            # self.LogBrowser.append('reading msbl file failed')
+            # print("msblfile_name_path is None")
+            self.LogBrowser.append('\n No File Selected')
+            self.FileLineEdit.clear()
             file_is_open = 0
 
     def print_as_hex(self, label, arr):
@@ -366,12 +371,12 @@ class SerialThread(QThread):  # 线程类
     def __del__(self):
         # 线程状态改变与线程终止
         self.working = False
-        # self.wait()
-        self.terminate()
+        self.wait()
+        # self.terminate()
         # self.exit()
 
     def set_iv(self):
-        self.my_signal.emit('\nSet IV')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nSet IV')
         nonce_hex = "".join("{:02X}".format(c) for c in self.msbl.header.nonce)
         self.my_signal.emit('set_iv ' + nonce_hex + '\n')
         ret = self.send_str_cmd('set_iv ' + nonce_hex + '\n')
@@ -380,7 +385,7 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def set_auth(self):
-        self.my_signal.emit('\nSet Auth')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nSet Auth')
         auth_hex = "".join("{:02X}".format(c) for c in self.msbl.header.auth)
         self.my_signal.emit('set_auth ' + auth_hex + '\n')
         ret = self.send_str_cmd('set_auth ' + auth_hex + '\n')
@@ -389,14 +394,14 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def set_num_pages(self, num_pages):
-        self.my_signal.emit('\nSet number of pages to download')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nSet number of pages to download')
         ret = self.send_str_cmd('num_pages ' + str(num_pages) + '\n')
         if ret[0] == 0:
             self.my_signal.emit('Set page size(' + str(num_pages) + ') successfully.')
         return ret[0]
 
     def erase_app(self):
-        self.my_signal.emit('\nErase App')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nErase App')
         ret = self.send_str_cmd('erase\n')
         if ret[0] == 0:
             self.my_signal.emit('Erasing App flash succeed.')
@@ -404,7 +409,7 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def enter_flash_mode(self):
-        self.my_signal.emit('\nEnter flashing mode')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nEnter flashing mode')
         ret = self.send_str_cmd('flash\n')
         if ret[0] == 0:
             self.my_signal.emit('flash command succeed.')
@@ -420,13 +425,14 @@ class SerialThread(QThread):  # 线程类
         while i < (8192 + 16):
             page_part = page_bin[i: i + step]
             self.ser.write(serial.to_bytes(page_part))
+            # self.ser.write(page_part)
             i = i + step
 
-        ret = self.parse_response("NA")
+        ret = self.parse_response('download page\n'.encode())
         return ret[0]
 
     def get_flash_page_size(self):
-        self.my_signal.emit('\nGet page size')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nGet page size')
         ret = self.send_str_cmd('page_size\n')
         if ret == 0:
             page_size = int(ret[1]['value'])
@@ -436,12 +442,13 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def set_host_mcu(self, ebl_mode, delay_factor):
-        if self.disable_echo() != 0:
-            self.my_signal.emit('Unable to disable echo mode. Communication failed...')
-            return False
 
         if self.set_host_operating_mode(ebl_mode) != 0:
             self.my_signal.emit('Unable to set mode of host to app or bootloader')
+            return False
+
+        if self.disable_echo() != 0:
+            self.my_signal.emit('Unable to disable echo mode. Communication failed...')
             return False
 
         if self.set_host_ebl_mode(ebl_mode) != 0:
@@ -455,7 +462,7 @@ class SerialThread(QThread):  # 线程类
         return True
 
     def set_host_ebl_mode(self, ebl_mode):
-        self.my_signal.emit('\nSet timeout mode to enter bootloader')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nSet timeout mode to enter bootloader')
         self.my_signal.emit('Command: set_cfg host ebl ' + str(ebl_mode) + '...' + '\n')
         ret = self.send_str_cmd('set_cfg host ebl ' + str(ebl_mode) + '\n')
 
@@ -465,7 +472,7 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def set_host_delay_factor(self, delay_factor):
-        self.my_signal.emit('\nSet delay factor in host')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nSet delay factor in host')
         self.my_signal.emit('Command: set_cfg host cdf ' + str(delay_factor) + '\n')
         ret = self.send_str_cmd('set_cfg host cdf ' + str(delay_factor) + '\n')
         if ret[0] == 0:
@@ -475,10 +482,10 @@ class SerialThread(QThread):  # 线程类
 
     def set_host_operating_mode(self, ebl_mode):
         # print(ebl_mode)
-        self.my_signal.emit('\nsets mode of host to app or bootloader')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nsets mode of host to app or bootloader')
         self.my_signal.emit('Command: set_host_opmode ' + str(ebl_mode) + '\n')
         ret = self.send_str_cmd('set_host_opmode ' + str(ebl_mode) + '\n')
-        print(ret[0])
+        # print(ret[0])
         if ret[0] == 0:
             self.my_signal.emit('Set host to app or bootloader ' + str(ebl_mode))
         time.sleep(0.6)
@@ -512,15 +519,16 @@ class SerialThread(QThread):  # 线程类
                 return [-1, {}]
             if out > 0:
                 data = self.ser.read(out)
-                # print(data)
+                print(data)
                 length = len(data)
+                print(' len: ' + str(length))
                 if length < 2:
                     print('length < 2')
                     self.my_signal.emit('TRY AGAIN... send_str_cmd failed. cmd: ' + str(cmd, 'utf-8') + ' len: ' + str(length))
-                    # continue
-                    return [-2, {}]
+                    continue
+                    # return [-2, {}]
                 else:
-                    arr = data.split()  # 分割字符串
+                    arr = data.split(b' ')  # 分割字符串
                     values = {}
                     num_keys = len(arr)
                     # print(num_keys)
@@ -531,17 +539,19 @@ class SerialThread(QThread):  # 线程类
                         else:
                             values[key_pair[0]] = b''
 
-                    retry = retry + 1
-                    if b'err' in values:
-                        return [int(values[b'err']), values]
-                    else:
-                        # continue
-                        # return [-3, {}]
-                        break
+                retry = retry + 1
+                if b'err' in values:
+                    # return [int(values[b'err']), values]
+                    break
+                else:
+                    continue
+                    # return [-3, {}]
+                    # break
                     # return [int(values[b'err']), values]
             else:
                 pass
-        return [-3, {}]
+        # return [-3, {}]
+        return [int(values[b'err']), values]
 
     def send_str_cmd(self, cmd):
         # length = 0
@@ -568,16 +578,16 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def restart_device(self):
-        self.my_signal.emit('\nRestart device')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nRestart device')
         ret = self.send_str_cmd('reset\n')
         if ret[0] == 0:
             self.my_signal.emit('Restarting device. ret: ' + str(ret[0]))
         return ret[0]
 
     def exit_from_bootloader(self):
-        self.my_signal.emit('\nJump to main application')
+        self.my_signal.emit('<font color=\"#228b22\">' + '\nJump to main application')
         ret = self.send_str_cmd('exit\n')
-        if ret[0] == 0:
+        if ret == 0:
             self.my_signal.emit('Jumping to main application. ret: ' + str(ret[0]))
         return ret[0]
 
@@ -585,13 +595,13 @@ class SerialThread(QThread):  # 线程类
         while self.working:
 
             if not self.set_host_mcu(1, 2):
-                self.my_signal.emit('Unable to set host')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Unable to set host')
                 return
 
             self.my_signal.emit("\n Downloading msbl file")
 
             if self.enter_bootloader_mode() != 0:
-                self.my_signal.emit('Entering bootloader mode failed')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Entering bootloader mode failed')
                 return
 
             # if self.get_device_info() != 0:
@@ -599,51 +609,54 @@ class SerialThread(QThread):  # 线程类
             # return
 
             if self.get_flash_page_size() != 0:
-                self.my_signal.emit('Reading flash page size failed')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Reading flash page size failed')
                 return
 
             time.sleep(0.2)
             num_pages = self.msbl.header.numPages
             if self.set_num_pages(num_pages) != 0:
-                self.my_signal.emit('Setting page size (', num_pages, ') failed.')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Setting page size (', num_pages, ') failed.')
                 return
 
             if self.set_iv() != 0:
-                self.my_signal.emit('Setting IV bytes failed.')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Setting IV bytes failed.')
                 return
 
             if self.set_auth() != 0:
-                self.my_signal.emit('Setting Auth bytes failed.')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Setting Auth bytes failed.')
                 return
 
             if self.erase_app() != 0:
-                self.my_signal.emit('Erasing app memory failed')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Erasing app memory failed')
                 return
 
             if self.enter_flash_mode() != 0:
-                self.my_signal.emit('Entering flash mode failed')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Entering flash mode failed')
                 return
 
             for i in range(0, num_pages):
                 self.my_signal.emit("Flashing " + str(i) + "/" + str(num_pages) + " page...")
                 ret = self.download_page(i)
-                if ret[0] == 0:
+                if ret == 0:
                     self.my_signal.emit("[DONE]")
                 else:
                     self.my_signal.emit("[FAILED]... err: " + str(ret))
                     return
 
             self.my_signal.emit('Flashing MSBL file succeed...')
-            reset = 1
+            reset = 0
             if reset:
-                self.my_signal.emit("Resetting target...")
+                self.my_signal.emit('<font color=\"#228b22\">' + 'Resetting target...')
                 if self.restart_device() != 0:
-                    self.my_signal.emit('Restart device failed')
+                    self.my_signal.emit('<font color=\"#ff4040\">' + 'Restart device failed')
                     return
             else:
-                self.exit_from_bootloader()
+                if self.exit_from_bootloader() != 0:
+                    self.my_signal.emit('<font color=\"#ff4040\">' + 'Jump to main application failed')
+                    return
 
-            self.my_signal.emit('SUCCEED...')
+            self.my_signal.emit('<font color=\"#228b22\">' + 'SUCCEED...')
+            self.working = False
             self.terminate()
 
 
@@ -652,5 +665,5 @@ if __name__ == "__main__":
     first = MAX_Serial()
     first.show()
     # first.pushButton.clicked.connect(first.loginEvent)
-    # first.actionAbout.triggered.connect(first.show_about)
+    first.actionHelp.triggered.connect(first.show_about)
     sys.exit(app.exec_())

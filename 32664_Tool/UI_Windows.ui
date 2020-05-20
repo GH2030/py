@@ -145,8 +145,9 @@
             <widget class="QTextBrowser" name="LogBrowser">
              <property name="font">
               <font>
-               <family>Source Code Pro</family>
+               <family>Source Code Pro Medium</family>
                <pointsize>10</pointsize>
+               <italic>false</italic>
               </font>
              </property>
             </widget>
@@ -214,7 +215,6 @@
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_File">
    <property name="text">
     <string>打开文件</string>

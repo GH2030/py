@@ -92,8 +92,9 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
         self.LogBrowser = QtWidgets.QTextBrowser(self.LogBox)
         font = QtGui.QFont()
-        font.setFamily("Source Code Pro")
+        font.setFamily("Source Code Pro Medium")
         font.setPointSize(10)
+        font.setItalic(False)
         self.LogBrowser.setFont(font)
         self.LogBrowser.setObjectName("LogBrowser")
         self.gridLayout.addWidget(self.LogBrowser, 0, 0, 1, 1)
@@ -124,9 +125,6 @@ class Ui_MainWindow(object):
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
         self.actionOpen_File = QtWidgets.QAction(MainWindow)
         self.actionOpen_File.setObjectName("actionOpen_File")
         self.actionSaveLog = QtWidgets.QAction(MainWindow)
@@ -170,13 +168,3 @@ class Ui_MainWindow(object):
         self.actionExit.setText(_translate("MainWindow", "退出"))
         self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+Q"))
         self.actionHelp.setText(_translate("MainWindow", "关于软件"))
-'''
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
-'''
