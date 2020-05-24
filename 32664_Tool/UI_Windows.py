@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_Windows.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.2
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -92,8 +92,8 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
         self.LogBrowser = QtWidgets.QTextBrowser(self.LogBox)
         font = QtGui.QFont()
-        font.setFamily("Source Code Pro Medium")
-        font.setPointSize(10)
+        font.setFamily("Consolas")
+        font.setPointSize(11)
         font.setItalic(False)
         self.LogBrowser.setFont(font)
         self.LogBrowser.setObjectName("LogBrowser")
@@ -118,7 +118,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addLayout(self.horizontalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 833, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 833, 23))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")

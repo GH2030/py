@@ -145,8 +145,8 @@
             <widget class="QTextBrowser" name="LogBrowser">
              <property name="font">
               <font>
-               <family>Source Code Pro Medium</family>
-               <pointsize>10</pointsize>
+               <family>Consolas</family>
+               <pointsize>11</pointsize>
                <italic>false</italic>
               </font>
              </property>
@@ -195,7 +195,7 @@
      <x>0</x>
      <y>0</y>
      <width>833</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

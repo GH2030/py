@@ -1,4 +1,5 @@
 import sys
+import os
 # import struct
 # import ctypes
 from copy import deepcopy
@@ -18,9 +19,6 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import QThread, pyqtSignal
 from UI_Windows import Ui_MainWindow
 from UI_About import Ui_About
-
-
-# from MAX_Thread import MyThread
 
 
 class MsblHeader(Structure):
@@ -272,7 +270,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
             # print(sizeof(header))
             # self.LogBrowser.setPlainText('Open File: ' + msblfile_name_path)
             self.FileLineEdit.setText(msblfile_name_path)
-            self.LogBrowser.append('Open File: ' + msblfile_name_path)
+            self.LogBrowser.append('Msbl File: ' + os.path.basename(msblfile_name_path))
             # print("msblfile_name_path is not None")
             with open(msblfile_name_path, 'rb') as f:
                 # header = f.read(sizeof(header))
@@ -310,7 +308,6 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
                 f.seek(-4, 2)
 
                 f.readinto(self.msbl.crc32)
-                boot_mem_page = i - 1
                 total_size = total_size + sizeof(self.msbl.crc32)
                 self.LogBrowser.append('Total file size: ' + str(total_size) + ' CRC32: ' + hex(self.msbl.crc32.val))
                 self.LogBrowser.append('<font color=\"#228b22\">' + '\n Reading msbl file succeed.')
@@ -465,7 +462,6 @@ class SerialThread(QThread):  # 线程类
         self.my_signal.emit('<font color=\"#228b22\">' + '\nSet timeout mode to enter bootloader')
         self.my_signal.emit('Command: set_cfg host ebl ' + str(ebl_mode) + '...' + '\n')
         ret = self.send_str_cmd('set_cfg host ebl ' + str(ebl_mode) + '\n')
-
         if ret[0] == 0:
             self.my_signal.emit('Set ebl_mode to ' + str(ebl_mode))
         time.sleep(0.6)
@@ -587,7 +583,7 @@ class SerialThread(QThread):  # 线程类
     def exit_from_bootloader(self):
         self.my_signal.emit('<font color=\"#228b22\">' + '\nJump to main application')
         ret = self.send_str_cmd('exit\n')
-        if ret == 0:
+        if ret[0] == 0:
             self.my_signal.emit('Jumping to main application. ret: ' + str(ret[0]))
         return ret[0]
 
@@ -657,6 +653,8 @@ class SerialThread(QThread):  # 线程类
 
             self.my_signal.emit('<font color=\"#228b22\">' + 'SUCCEED...')
             self.working = False
+            self.SendButton.setText('发送文件')
+            self.OpenPortButton.setEnabled(True)
             # self.terminate()
 
 
