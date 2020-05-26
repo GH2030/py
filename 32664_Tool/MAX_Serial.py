@@ -83,8 +83,8 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MAX_Serial, self).__init__()
 
-        self.setupUi(self)
         self.setWindowIcon(QIcon("./Downloads.ico"))
+        self.setupUi(self)
 
         self.msbl = Object()
         self.Com_Dict = {}
@@ -253,12 +253,6 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
     def receive_data_clear(self):
         self.LogBrowser.clear()
 
-    def Send_File(self):
-        if self.SendButton.text() == "发送文件":
-            self.SendButton.setText('停止发送')
-        else:
-            self.SendButton.setText('发送文件')
-
     def read_msbl_file(self):
         global file_is_open
         total_size = 0
@@ -270,7 +264,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
             # print(sizeof(header))
             # self.LogBrowser.setPlainText('Open File: ' + msblfile_name_path)
             self.FileLineEdit.setText(msblfile_name_path)
-            self.LogBrowser.append('Msbl File: ' + os.path.basename(msblfile_name_path))
+            self.LogBrowser.append('File Name: ' + os.path.basename(msblfile_name_path))
             # print("msblfile_name_path is not None")
             with open(msblfile_name_path, 'rb') as f:
                 # header = f.read(sizeof(header))
@@ -330,7 +324,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def save_log(self):
         log_text = self.LogBrowser.toPlainText()
-        logfile_name = QFileDialog.getSaveFileName(self, "保存文件", "./", "text(*.txt)")
+        logfile_name = QFileDialog.getSaveFileName(self, '保存文件', './', 'text(*.txt)')
         # print(logfile_name)
         log_name_path = logfile_name[0]
         if log_name_path != '':
