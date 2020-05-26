@@ -83,7 +83,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MAX_Serial, self).__init__()
 
-        self.setWindowIcon(QIcon("./Downloads.ico"))
+        self.setWindowIcon(QIcon('./Downloads.ico'))
         self.setupUi(self)
 
         self.msbl = Object()
