@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import QThread, pyqtSignal
 from UI_Windows import Ui_MainWindow
 from UI_About import Ui_About
+import images_rc
 
 
 class MsblHeader(Structure):
@@ -83,7 +84,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MAX_Serial, self).__init__()
 
-        self.setWindowIcon(QIcon('./Downloads.ico'))
+        self.setWindowIcon(QIcon(':/Downloads.ico'))
         self.setupUi(self)
 
         self.msbl = Object()
@@ -346,7 +347,7 @@ class Ui_Windows(QtWidgets.QDialog, Ui_About):
     def __init__(self):
         super(Ui_Windows, self).__init__()
         self.setupUi(self)
-        self.setWindowIcon(QIcon("./Downloads.ico"))
+        self.setWindowIcon(QIcon(':/Downloads.ico'))
 
 
 class SerialThread(QThread):  # 线程类
@@ -588,7 +589,7 @@ class SerialThread(QThread):  # 线程类
                 self.my_signal.emit('<font color=\"#ff4040\">' + 'Unable to set host')
                 return
 
-            self.my_signal.emit("\n Downloading msbl file")
+            self.my_signal.emit('\n Downloading msbl file')
 
             if self.enter_bootloader_mode() != 0:
                 self.my_signal.emit('<font color=\"#ff4040\">' + 'Entering bootloader mode failed')
