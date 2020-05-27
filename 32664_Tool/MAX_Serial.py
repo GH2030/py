@@ -493,7 +493,7 @@ class SerialThread(QThread):  # 线程类
             elif ret[0] == -1:
                 break
             else:
-                self.my_signal.emit("Failed... ret: " + str(ret[0]) + " RETRY...")
+                self.my_signal.emit("Failed... ret: " + str(ret[0]) + ' RETRY...')
         return ret[0]
 
     def parse_response(self, cmd):
