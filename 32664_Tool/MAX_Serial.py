@@ -305,7 +305,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
                 f.readinto(self.msbl.crc32)
                 total_size = total_size + sizeof(self.msbl.crc32)
                 self.LogBrowser.append('Total file size: ' + str(total_size) + ' CRC32: ' + hex(self.msbl.crc32.val))
-                self.LogBrowser.append('<font color=\"#228b22\">' + '\n Reading msbl file succeed.')
+                self.LogBrowser.append('<font color=\"#228b22\">' + '\n Reading msbl file succeed.\n')
                 file_is_open = 1
 
             f.close()
@@ -346,8 +346,8 @@ class Ui_Windows(QtWidgets.QDialog, Ui_About):
 
     def __init__(self):
         super(Ui_Windows, self).__init__()
-        self.setupUi(self)
         self.setWindowIcon(QIcon(':/Downloads.ico'))
+        self.setupUi(self)
 
 
 class SerialThread(QThread):  # 线程类
@@ -426,7 +426,7 @@ class SerialThread(QThread):  # 线程类
     def get_flash_page_size(self):
         self.my_signal.emit('<font color=\"#228b22\">' + '\nGet page size')
         ret = self.send_str_cmd('page_size\n')
-        if ret == 0:
+        if ret[0] == 0:
             page_size = int(ret[1]['value'])
             self.my_signal.emit('Target page size: ' + str(page_size))
             if page_size != 8192:
@@ -626,7 +626,7 @@ class SerialThread(QThread):  # 线程类
                 return
 
             for i in range(0, num_pages):
-                self.my_signal.emit("Flashing " + str(i) + "/" + str(num_pages) + " page...")
+                self.my_signal.emit('Flashing ' + str(i) + '/' + str(num_pages) + ' page...')
                 ret = self.download_page(i)
                 if ret == 0:
                     self.my_signal.emit('<font color=\"#228b22\">' + '[DONE]')
