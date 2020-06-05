@@ -145,7 +145,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MAX32664-Tool Version 0.1"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MAX32664-Tool v0.1"))
         self.ComSetBox.setTitle(_translate("MainWindow", "串口设置"))
         self.ScanPortButton.setText(_translate("MainWindow", "扫描串口"))
         self.OpenPortButton.setText(_translate("MainWindow", "打开串口"))
