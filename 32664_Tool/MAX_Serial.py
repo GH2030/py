@@ -92,7 +92,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.init()
         self.ser = serial.Serial()
-        self.ser.timeout = 0.5
+        self.ser.timeout = 30
 
         # 实例化线程对象
         self.my_thread = SerialThread(self.msbl, self.ser)
@@ -635,7 +635,7 @@ class SerialThread(QThread):  # 线程类
                     return
 
             self.my_signal.emit('Flashing MSBL file succeed...')
-            reset = 0
+            reset = 1
             if reset:
                 self.my_signal.emit('<font color=\"#228b22\">' + 'Resetting target...')
                 if self.restart_device() != 0:
@@ -645,6 +645,9 @@ class SerialThread(QThread):  # 线程类
                 if self.exit_from_bootloader() != 0:
                     self.my_signal.emit('<font color=\"#ff4040\">' + 'Jump to main application failed')
                     return
+            if self.set_host_operating_mode(0) != 0:
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'set mode of host failed.')
+                return
 
             self.my_signal.emit('<font color=\"#228b22\">' + 'SUCCEED...')
             self.working = False
