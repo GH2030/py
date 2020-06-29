@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_Windows.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.14.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -118,7 +118,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addLayout(self.horizontalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 833, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 833, 22))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -157,7 +157,7 @@ class Ui_MainWindow(object):
         self.FloCtrlLabel.setText(_translate("MainWindow", "流控制"))
         self.LogBox.setTitle(_translate("MainWindow", "调试信息"))
         self.OpenFileButton.setText(_translate("MainWindow", "打开文件"))
-        self.SendButton.setText(_translate("MainWindow", "发送文件"))
+        self.SendButton.setText(_translate("MainWindow", "下载文件"))
         self.CleanButton.setText(_translate("MainWindow", "清除显示"))
         self.menuFile.setTitle(_translate("MainWindow", "文件"))
         self.menuHelp.setTitle(_translate("MainWindow", "帮助"))

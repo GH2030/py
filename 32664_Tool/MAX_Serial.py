@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 import sys
 import os
 # import struct
-# import ctypes
+import ctypes
 from copy import deepcopy
 from ctypes import *
 import time
@@ -20,6 +21,8 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from UI_Windows import Ui_MainWindow
 from UI_About import Ui_About
 import images_rc
+import win32con
+from win32process import SuspendThread, ResumeThread
 
 
 class MsblHeader(Structure):
@@ -148,23 +151,33 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
     # 由于自定义信号时自动传递一个字符串参数，所以在这个槽函数中要接受一个参数
     def set_show_text_func(self, s):
         self.LogBrowser.append(s)
+        # if b'SUCCEED' in s:
+        #     self.SendButton.setText('发送文件')
+        #     self.OpenPortButton.setEnabled(True)
 
     def start_SerialThread(self):
         global com_is_open
         global file_is_open
         if com_is_open and file_is_open:
-            if self.SendButton.text() == '发送文件':
-                self.SendButton.setText('停止发送')
+            if self.SendButton.text() == '下载文件':
+                self.SendButton.setText('停止下载')
                 self.OpenPortButton.setEnabled(False)
+                # if self.my_thread.isRunning():
+                #     # self.my_thread.working = True
+                #     ret = ResumeThread(self.my_thread.handle)
+                #     print('恢复线程', self.my_thread.handle, ret)
+                # else:
                 # 启动线程
                 self.my_thread.working = True
                 self.my_thread.start()
             else:
-                self.SendButton.setText('发送文件')
+                self.SendButton.setText('下载文件')
                 self.OpenPortButton.setEnabled(True)
                 self.my_thread.working = False
                 self.my_thread.terminate()
 
+                # ret = SuspendThread(self.my_thread.handle)
+                # print('挂起线程', self.my_thread.handle, ret)
         else:
             if com_is_open == 0:
                 QMessageBox.information(self, "Port Info", "没有打开串口")
@@ -321,6 +334,11 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
     def exit_tool(self):
         if self.ser.isOpen():
             self.ser.close()
+        if self.my_thread.isRunning():
+            self.my_thread.quit()
+            # 强制
+            # self.my_thread.terminate()
+        del self.my_thread
         self.close()
 
     def save_log(self):
@@ -352,6 +370,7 @@ class Ui_Windows(QtWidgets.QDialog, Ui_About):
 
 class SerialThread(QThread):  # 线程类
     my_signal = pyqtSignal(str)  # 自定义信号对象.参数str就代表这个信号可以传一个字符串
+    handle = -1
 
     def __init__(self, _msbl, _ser):
         super(SerialThread, self).__init__()
@@ -360,12 +379,12 @@ class SerialThread(QThread):  # 线程类
         self.working = False
         # self.num = 0
 
-    def __del__(self):
-        # 线程状态改变与线程终止
-        self.working = False
-        self.wait()
-        # self.terminate()
-        # self.exit()
+    # def __del__(self):
+    #     # 线程状态改变与线程终止
+    #     self.working = False
+    #     self.wait()
+    #     # self.terminate()
+    #     # self.exit()
 
     def set_iv(self):
         self.my_signal.emit('<font color=\"#228b22\">' + '\nSet IV')
@@ -426,11 +445,16 @@ class SerialThread(QThread):  # 线程类
     def get_flash_page_size(self):
         self.my_signal.emit('<font color=\"#228b22\">' + '\nGet page size')
         ret = self.send_str_cmd('page_size\n')
+        # print(ret)
         if ret[0] == 0:
-            page_size = int(ret[1]['value'])
-            self.my_signal.emit('Target page size: ' + str(page_size))
+            # print(ret[1].keys())
+            # print(b'value' in ret[1])
+            page_size = int(ret[1][b'value'])
+            self.my_signal.emit('Target page size: ' + str(page_size) + '\n')
             if page_size != 8192:
-                self.my_signal.emit('WARNING: Page size is not 8192. page_size: ' + str(page_size))
+                self.my_signal.emit('WARNING: Page size is not 8192. page_size: ' + str(page_size) + '\n')
+        else:
+            self.my_signal.emit('Get page size err\n')
         return ret[0]
 
     def set_host_mcu(self, ebl_mode, delay_factor):
@@ -510,7 +534,7 @@ class SerialThread(QThread):  # 线程类
                 return [-1, {}]
             if out > 0:
                 data = self.ser.read(out)
-                # print(data)
+                print(data)
                 length = len(data)
                 # print(' len: ' + str(length))
                 if length < 2:
@@ -518,17 +542,17 @@ class SerialThread(QThread):  # 线程类
                     self.my_signal.emit('TRY AGAIN... send_str_cmd failed. cmd: ' + str(cmd, 'utf-8') + ' len: ' + str(length))
                     continue
                     # return [-2, {}]
-                else:
-                    arr = data.split(b' ')  # 分割字符串
-                    values = {}
-                    num_keys = len(arr)
-                    # print(num_keys)
-                    for i in range(1, num_keys):
-                        key_pair = arr[i].split(b'=')
-                        if len(key_pair) == 2:
-                            values[key_pair[0]] = key_pair[1]
-                        else:
-                            values[key_pair[0]] = b''
+                # else:
+                arr = data.split(b' ')  # 分割字符串
+                values = {}
+                num_keys = len(arr)
+                # print(num_keys)
+                for i in range(1, num_keys):
+                    key_pair = arr[i].split(b'=')
+                    if len(key_pair) == 2:
+                        values[key_pair[0]] = key_pair[1]
+                    else:
+                        values[key_pair[0]] = b''
 
                 retry = retry + 1
                 if b'err' in values:
@@ -583,6 +607,11 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def run(self):
+        try:
+            self.handle = ctypes.windll.kernel32.OpenThread(  # @UndefinedVariable
+                win32con.PROCESS_ALL_ACCESS, False, int(QThread.currentThreadId()))
+        except Exception as e:
+            print('get thread handle failed', e)
         while self.working:
 
             if not self.set_host_mcu(1, 2):
@@ -626,7 +655,7 @@ class SerialThread(QThread):  # 线程类
                 return
 
             for i in range(0, num_pages):
-                self.my_signal.emit('Flashing ' + str(i) + '/' + str(num_pages) + ' page...')
+                self.my_signal.emit('Flashing ' + str(i + 1) + '/' + str(num_pages) + ' page...')
                 ret = self.download_page(i)
                 if ret == 0:
                     self.my_signal.emit('<font color=\"#228b22\">' + '[DONE]')
@@ -646,14 +675,13 @@ class SerialThread(QThread):  # 线程类
                     self.my_signal.emit('<font color=\"#ff4040\">' + 'Jump to main application failed')
                     return
             if self.set_host_operating_mode(0) != 0:
-                self.my_signal.emit('<font color=\"#ff4040\">' + 'set mode of host failed.')
+                self.my_signal.emit('<font color=\"#ff4040\">' + 'Unable to set mode of host to app')
                 return
 
             self.my_signal.emit('<font color=\"#228b22\">' + 'SUCCEED...')
-            self.working = False
-            self.SendButton.setText('发送文件')
-            self.OpenPortButton.setEnabled(True)
             # self.terminate()
+            self.working = False
+            # QThread.sleep(1)
 
 
 if __name__ == "__main__":
