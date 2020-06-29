@@ -21,8 +21,8 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from UI_Windows import Ui_MainWindow
 from UI_About import Ui_About
 import images_rc
-import win32con
-from win32process import SuspendThread, ResumeThread
+# import win32con
+# from win32process import SuspendThread, ResumeThread
 
 
 class MsblHeader(Structure):
@@ -607,11 +607,11 @@ class SerialThread(QThread):  # 线程类
         return ret[0]
 
     def run(self):
-        try:
-            self.handle = ctypes.windll.kernel32.OpenThread(  # @UndefinedVariable
-                win32con.PROCESS_ALL_ACCESS, False, int(QThread.currentThreadId()))
-        except Exception as e:
-            print('get thread handle failed', e)
+        # try:
+        #     self.handle = ctypes.windll.kernel32.OpenThread(  # @UndefinedVariable
+        #         win32con.PROCESS_ALL_ACCESS, False, int(QThread.currentThreadId()))
+        # except Exception as e:
+        #     print('get thread handle failed', e)
         while self.working:
 
             if not self.set_host_mcu(1, 2):
