@@ -86,13 +86,17 @@ class MaximBootloader(object):
         self.ser.port = port
         self.ser.baudrate = 115200
         self.ser.timeout = 300
-        self.ser.close()
+        # print(self.ser)
+        if self.ser.isOpen():
+            print('close COM')
+            self.ser.close()
         try:
             self.ser.open()  # open the serial port
 
             if self.ser.isOpen():
                 print(self.ser.name + ' is open...')
-        except (OSError, serial.SerialException):
+        except Exception as e:
+            print(e)
             print(Fore.RED + 'Cannot open serial port ' + port)
             exit(-1)
 
@@ -545,13 +549,14 @@ class MaximBootloader(object):
         self.ser.close()
 
 
-def fls_32664(port, msblfile):
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--msblfile", required=True, type=str,
-                        help="msbl file as input")
-    parser.add_argument("-p", "--port", required=True, type=str,
-                        help="Serial port name in Windows")
-    args = parser.parse_args()
+def main():
+    print(len(sys.argv))
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--msblfile", required=True, type=str,
+    #                     help="msbl file as input")
+    # parser.add_argument("--port", required=True, type=str,
+    #                     help="Serial port name in Windows")
+    # args = parser.parse_args()
     init(autoreset=True)
     print(Fore.CYAN + '\n\nMAXIM FIRMWARE DOWNLOADER ' + VERSION + '\n\n')
     # ebl_mode = int(args.ebl_mode == True)
@@ -560,10 +565,10 @@ def fls_32664(port, msblfile):
     print("Reset Target: ", True)
     print("EBL mode: ", 1)
     print("Delay Factor: ", 2)
-    print("Port: ", args.port)
-    print("MSBL file: ", args.msblfile)
+    print("Port: ", sys.argv[1])
+    print("MSBL file: ", sys.argv[2])
 
-    bl = MaximBootloader(args.msblfile, args.port)
+    bl = MaximBootloader(sys.argv[2], sys.argv[1])
     print('### Press double Ctrl + C to stop\t')
     try:
         if not bl.read_msbl_file():
@@ -582,3 +587,6 @@ def fls_32664(port, msblfile):
         bl.quit()
         sys.exit(0)
 
+
+if __name__ == '__main__':
+    main()

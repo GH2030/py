@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-# import os
+import os
 # import struct
 # import ctypes
 # from copy import deepcopy
@@ -22,6 +22,7 @@ from UI_Windows import Ui_MainWindow
 from UI_About import Ui_About
 # import images_rc
 import download_fw
+
 # from download_fw import MaximBootloader
 # import win32con
 # from win32process import SuspendThread, ResumeThread
@@ -93,7 +94,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
             self.Com_Dict["%s" % port[0]] = "%s" % port[1]
             self.COMCB.addItem(port[0])
             COM = self.COMCB.currentText()
-            print('-p ' + COM)
+            # print('-p ' + COM)
             com_is_open = 1
         if len(self.Com_Dict) == 0:
             # self.COMCB.addItem("无串口")
@@ -108,7 +109,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         # print(msblfile_name)
         msblfile_name_path = msblfile_name[0]
         MSBLF = msblfile_name_path
-        print('-f ' + msblfile_name_path)
+        # print('-f ' + msblfile_name_path)
 
         if msblfile_name_path != '':
             self.FileLineEdit.setText(msblfile_name_path)
@@ -137,7 +138,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
                 # download_fw.fls_32664(self.COMCB.currentText(), self.FileLineEdit.text())
             else:
                 self.SendButton.setText('下载文件')
-                print(self.COMCB.currentText())
+                # print(self.COMCB.currentText())
                 # download_fw.co_32664(self.COMCB.currentText(), self.FileLineEdit.text())
                 # download_fw.MaximBootloader.co_port(MSBLF, COM)
                 # self.OpenPortButton.setEnabled(True)
@@ -181,7 +182,10 @@ class SerialThread(QThread):  # 线程类
 
     def run(self):
         if self.working:
-            download_fw.fls_32664(COM, MSBLF)
+            print(MSBLF)
+            # os.system(command='python download_fw.py %s %s' % (COM, MSBLF))
+            os.popen('python download_fw.py %s %s' % (COM, MSBLF))
+            # download_fw.fls_32664(COM, MSBLF)
             self.working = False
 
 
