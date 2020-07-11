@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_Windows.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.2
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(491, 149)
+        MainWindow.resize(413, 163)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
@@ -22,6 +22,13 @@ class Ui_MainWindow(object):
         self.PortSet.setObjectName("PortSet")
         self.gridLayout = QtWidgets.QGridLayout(self.PortSet)
         self.gridLayout.setObjectName("gridLayout")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.FileLineEdit = QtWidgets.QLineEdit(self.PortSet)
+        self.FileLineEdit.setReadOnly(True)
+        self.FileLineEdit.setClearButtonEnabled(False)
+        self.FileLineEdit.setObjectName("FileLineEdit")
+        self.verticalLayout_2.addWidget(self.FileLineEdit)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout = QtWidgets.QVBoxLayout()
@@ -44,20 +51,18 @@ class Ui_MainWindow(object):
         self.OpenFileButton = QtWidgets.QPushButton(self.PortSet)
         self.OpenFileButton.setObjectName("OpenFileButton")
         self.horizontalLayout_2.addWidget(self.OpenFileButton)
-        self.FileLineEdit = QtWidgets.QLineEdit(self.PortSet)
-        self.FileLineEdit.setReadOnly(True)
-        self.FileLineEdit.setClearButtonEnabled(False)
-        self.FileLineEdit.setObjectName("FileLineEdit")
-        self.horizontalLayout_2.addWidget(self.FileLineEdit)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
         self.SendButton = QtWidgets.QPushButton(self.PortSet)
         self.SendButton.setObjectName("SendButton")
         self.horizontalLayout_2.addWidget(self.SendButton)
         self.horizontalLayout_3.addLayout(self.horizontalLayout_2)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.gridLayout.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.PortSet, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 491, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 413, 23))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")

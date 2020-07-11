@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from __future__ import print_function
-# import os
+import os
 import sys
 import serial
 # import threading
@@ -21,6 +21,7 @@ from ctypes import *
 # from threading import Timer, Thread, Event
 from datetime import datetime
 from colorama import Fore, Back, Style, init
+import config as glb
 
 VERSION = "0.33"
 platform_types = {1: 'MAX32660'}
@@ -80,22 +81,29 @@ class EBL_MODE:
     USE_GPIO = 1
 
 
+stop = False
+
+
 class MaximBootloader(object):
     def __init__(self, msbl_file, port):
         self.ser = serial.Serial()
         self.ser.port = port
         self.ser.baudrate = 115200
         self.ser.timeout = 300
+        # self.ser.flushOutput()
+        # self.ser.close()
         # print(self.ser)
-        if self.ser.isOpen():
-            print('close COM')
-            self.ser.close()
+        # if self.ser.isOpen():
+        #     print('close COM')
+        # else:
+        #     print('isOpen COM')
+        #     self.ser.close()
         try:
             self.ser.open()  # open the serial port
 
             if self.ser.isOpen():
                 print(self.ser.name + ' is open...')
-        except Exception as e:
+        except serial.SerialException as e:
             print(e)
             print(Fore.RED + 'Cannot open serial port ' + port)
             exit(-1)
@@ -104,13 +112,19 @@ class MaximBootloader(object):
         self.msbl = Object()
         self.msbl.file_name = msbl_file
         self.quit_flag = False
-        print('msbl file name: ' + self.msbl.file_name)
+        # print('msbl file name: ' + os.path.basename(self.msbl.file_name))
 
     def co_port(self):
         # if self.ser.isOpen():
         # self.ser.close()
         print('COM is close\n')
         self.quit()
+
+    # @classmethod
+    # def Quit_32664(cls, s1, s2):
+    #     # cls(s2, s1).close()
+    #     cls(s2, s1).quit()
+    #     # cls().quit()
 
     def key_press_to_continue(self):
         try:
@@ -123,7 +137,7 @@ class MaximBootloader(object):
 
     def read_msbl_file(self):
         total_size = 0
-        print('msbl file name: ' + self.msbl.file_name)
+        print('msbl file name: ' + os.path.basename(self.msbl.file_name))
         with open(self.msbl.file_name, 'rb') as f:
             # print('open file ok')
             header = MsblHeader()
@@ -138,7 +152,7 @@ class MaximBootloader(object):
                 print('crcSize: ' + str(header.crcSize))
                 print('size of header: ' + str(sizeof(header)))
 
-                print('  resv0: ', header.resv0)
+                print('resv0: ', header.resv0)
                 self.print_as_hex('nonce', header.nonce)
                 self.print_as_hex('auth', header.auth)
                 self.print_as_hex('resv1', header.resv1)
@@ -549,8 +563,8 @@ class MaximBootloader(object):
         self.ser.close()
 
 
-def main():
-    print(len(sys.argv))
+def fls_32664(port, msblfile):
+    # print(sys.argv)
     # parser = argparse.ArgumentParser()
     # parser.add_argument("--msblfile", required=True, type=str,
     #                     help="msbl file as input")
@@ -565,28 +579,62 @@ def main():
     print("Reset Target: ", True)
     print("EBL mode: ", 1)
     print("Delay Factor: ", 2)
-    print("Port: ", sys.argv[1])
-    print("MSBL file: ", sys.argv[2])
-
-    bl = MaximBootloader(sys.argv[2], sys.argv[1])
+    print("Port: ", port)
+    print("MSBL file: ", msblfile)
+    glb.set_value('stop', False)
+    # bl = MaximBootloader(msblfile, port)
     print('### Press double Ctrl + C to stop\t')
-    try:
-        if not bl.read_msbl_file():
-            print('reading msbl file failed')
-            raise Exception('Unable to read MSBL file')
+    if glb.get_value('BL') is None:
+        glb.set_value('BL', MaximBootloader(msblfile, port))
+        bl = glb.get_value('BL')
+        try:
+            if not bl.read_msbl_file():
+                print('reading msbl file failed')
+                raise Exception('Unable to read MSBL file')
 
-        if not bl.set_host_mcu(1, 2):
-            raise Exception('Unable to set host')
+            if not bl.set_host_mcu(1, 2):
+                raise Exception('Unable to set host')
 
-        # if args.massflash:
-        #     bl.bootloader(BL_MODE.CONTINUES_DOWNLOAD, args.reset)
-        # else:
-        bl.bootloader(BL_MODE.SINGLE_DOWNLOAD, True)
+            # if args.massflash:
+            #     bl.bootloader(BL_MODE.CONTINUES_DOWNLOAD, args.reset)
+            # else:
+            bl.bootloader(BL_MODE.SINGLE_DOWNLOAD, True)
 
-    except KeyboardInterrupt:
-        bl.quit()
-        sys.exit(0)
+        except KeyboardInterrupt:
+            # print(result)
+            bl.quit()
+            sys.exit(0)
+    else:
+        bl = glb.get_value('BL')
+        # try:
+        #     q_32664()
+        # except Exception as result:
+        #     print(result)
+        #     sys.exit(0)
+
+        try:
+            if not bl.read_msbl_file():
+                print('reading msbl file failed')
+                raise Exception('Unable to read MSBL file')
+
+            if not bl.set_host_mcu(1, 2):
+                raise Exception('Unable to set host')
+
+            # if args.massflash:
+            #     bl.bootloader(BL_MODE.CONTINUES_DOWNLOAD, args.reset)
+            # else:
+            bl.bootloader(BL_MODE.SINGLE_DOWNLOAD, True)
+
+        except KeyboardInterrupt:
+            # print(result)
+            bl.quit()
+            sys.exit(0)
 
 
-if __name__ == '__main__':
-    main()
+# def q_32664():
+#     if glb.get_value('stop'):
+#         ex = Exception('quit')
+#         raise ex
+
+# if __name__ == '__main__':
+#     main()
