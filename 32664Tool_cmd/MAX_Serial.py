@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-import os
+# import os
 # import struct
 # import ctypes
 # from copy import deepcopy
@@ -56,7 +56,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         print('程序启动\n'
               '使用步骤：\n'
               '1.点击‘扫描串口‘按钮;\n'
-              '2.点击‘选择文件’按钮，选择msbl文件;\n'
+              '2.点击‘选择文件’按钮，选择msbl文件（文件路径不要有空格）;\n'
               '3.点击’下载文件‘按钮下载文件（可再次点击停止下载），等待执行结束。\n')
         # 串口配置
         """
