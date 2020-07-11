@@ -53,6 +53,11 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         self.my_thread.my_signal.connect(self.flash_ok)  # 线程自定义信号连接的槽函数
 
     def init(self):
+        print('程序启动\n'
+              '使用步骤：\n'
+              '1.点击‘扫描串口‘按钮;\n'
+              '2.点击‘选择文件’按钮，选择msbl文件;\n'
+              '3.点击’下载文件‘按钮下载文件（可再次点击停止下载），等待执行结束。\n')
         # 串口配置
         """
         self.BAUDCB.addItem('115200')
@@ -89,7 +94,10 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # self.LogBrowser.document().setMaximumBlockCount(100)
     def scom(self):
-        print('当前串口：' + self.COMCB.currentText())
+        if self.COMCB.currentText():
+            print('当前串口：' + self.COMCB.currentText())
+        else:
+            pass
 
     def flash_ok(self, s):
         print(s)
@@ -132,21 +140,20 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         msblfile_name = QFileDialog.getOpenFileName(self, '选择文件', './', 'msbl文件(*.msbl)')
         # print(msblfile_name)
         msblfile_name_path = msblfile_name[0]
-        print('当前选择文件：' + msblfile_name_path)
         # MSBLF = msblfile_name_path
         gl.set_value('MSBLF', msblfile_name_path)
 
         if msblfile_name_path != '':
             self.FileLineEdit.setText(msblfile_name_path)
+            print('选择文件：' + msblfile_name_path)
             # file_is_open = 1
-            # config.set_var(file_is_open, 1)
             gl.set_value('file_is_open', 1)
         else:
             # print("msblfile_name_path is None")
             # QMessageBox.information(self, "File Info", 'No File Selected')
+            print('未选择文件')
             self.FileLineEdit.clear()
             # file_is_open = 0
-            # config.set_var(file_is_open, 0)
             gl.set_value('file_is_open', 0)
 
     def fw(self):
@@ -170,9 +177,6 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self.SendButton.setText('下载文件')
                 print('下载线程停止')
-                # download_fw.q_32664(True)
-                # ss = download_fw.onexit()
-                # ss.quit()
                 gl.set_value('stop', True)
                 # print(self.COMCB.currentText())
                 # download_fw.co_32664(self.COMCB.currentText(), self.FileLineEdit.text())

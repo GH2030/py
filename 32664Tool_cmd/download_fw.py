@@ -8,7 +8,7 @@ import serial
 # import logging
 # import signal
 # import time
-import argparse
+# import argparse
 # import atexit
 # import re
 # import struct
@@ -20,7 +20,7 @@ from copy import deepcopy
 from ctypes import *
 # from threading import Timer, Thread, Event
 from datetime import datetime
-from colorama import Fore, Back, Style, init
+from colorama import Fore, Back, init
 import config as glb
 
 VERSION = "0.33"
@@ -113,18 +113,6 @@ class MaximBootloader(object):
         self.msbl.file_name = msbl_file
         self.quit_flag = False
         # print('msbl file name: ' + os.path.basename(self.msbl.file_name))
-
-    def co_port(self):
-        # if self.ser.isOpen():
-        # self.ser.close()
-        print('COM is close\n')
-        self.quit()
-
-    # @classmethod
-    # def Quit_32664(cls, s1, s2):
-    #     # cls(s2, s1).close()
-    #     cls(s2, s1).quit()
-    #     # cls().quit()
 
     def key_press_to_continue(self):
         try:
