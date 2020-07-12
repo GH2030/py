@@ -90,14 +90,6 @@ class MaximBootloader(object):
         self.ser.port = port
         self.ser.baudrate = 115200
         self.ser.timeout = 300
-        # self.ser.flushOutput()
-        # self.ser.close()
-        # print(self.ser)
-        # if self.ser.isOpen():
-        #     print('close COM')
-        # else:
-        #     print('isOpen COM')
-        #     self.ser.close()
         try:
             self.ser.open()  # open the serial port
 

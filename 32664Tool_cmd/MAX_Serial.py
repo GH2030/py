@@ -53,9 +53,9 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         self.my_thread.my_signal.connect(self.flash_ok)  # 线程自定义信号连接的槽函数
 
     def init(self):
-        print('程序启动\n'
-              '使用步骤：\n'
-              '1.点击‘扫描串口‘按钮;\n'
+        print('程序启动...\n'
+              '使用说明：\n'
+              '1.点击‘扫描串口‘按钮，选择对应串口;\n'
               '2.点击‘选择文件’按钮，选择msbl文件（文件路径不要有空格）;\n'
               '3.点击’下载文件‘按钮下载文件（可再次点击停止下载），等待执行结束。\n')
         # 串口配置
@@ -164,7 +164,6 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         # if com_is_open and file_is_open:
         if gl.get_value('com_is_open') == 1 and gl.get_value('file_is_open') == 1:
             if self.SendButton.text() == '下载文件':
-                print('下载线程开始')
                 self.SendButton.setText('停止下载')
                 # self.OpenPortButton.setEnabled(False)
                 self.ScanPortButton.setEnabled(False)
@@ -173,10 +172,10 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.my_thread.working = True
                 self.my_thread.start()
-                # download_fw.fls_32664(self.COMCB.currentText(), self.FileLineEdit.text())
+                print('下载线程开始执行')
             else:
                 self.SendButton.setText('下载文件')
-                print('下载线程停止')
+                print('下载线程已停止')
                 gl.set_value('stop', True)
                 # print(self.COMCB.currentText())
                 # download_fw.co_32664(self.COMCB.currentText(), self.FileLineEdit.text())
@@ -195,7 +194,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def exit_tool(self):
         self.close()
-        sys.exit()
+        sys.exit(0)
 
     def show_about(self):
         self.about_ui = Ui_Windows()
