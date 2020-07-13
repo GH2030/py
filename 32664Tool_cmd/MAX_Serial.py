@@ -102,13 +102,14 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
 
     def flash_ok(self, s):
-        print(s)
         self.SendButton.setText('下载文件')
         self.COMCB.setEnabled(True)
         self.ScanPortButton.setEnabled(True)
         self.OpenFileButton.setEnabled(True)
         self.my_thread.working = False
         self.my_thread.terminate()
+        if self.my_thread.working:
+            print(s)
 
     # 串口检测
     def port_check(self):

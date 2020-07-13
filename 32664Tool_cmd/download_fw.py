@@ -411,7 +411,7 @@ class MaximBootloader(object):
 
         print('SUCCEED...')
         self.close()
-        sys.exit(0)
+        # sys.exit(0)
 
     def bootloader(self, mode, reset):
         if mode == BL_MODE.SINGLE_DOWNLOAD:
