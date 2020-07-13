@@ -332,7 +332,7 @@ class MaximBootloader(object):
             return
 
         for i in range(0, num_pages):
-            print("Flashing " + str(i) + "/" + str(num_pages) + " page...", end="")
+            print("Flashing " + str(i + 1) + "/" + str(num_pages) + " page...", end="")
             ret = self.download_page(i)
             if ret == 0:
                 print("[DONE]")
@@ -350,7 +350,8 @@ class MaximBootloader(object):
 
         print(Fore.GREEN + 'SUCCEED...')
         self.close()
-        sys.exit(0)
+        # sys.exit(0)
+        # self.quit()
 
     def bootloader_continuous_download(self, reset):
         print('\nDownloading msbl file')
@@ -561,7 +562,7 @@ def fls_32664(port, msblfile):
     print("Delay Factor: ", 2)
     print("Port: ", port)
     print("MSBL file: ", msblfile)
-    glb.set_value('stop', False)
+    # glb.set_value('stop', False)
     # bl = MaximBootloader(msblfile, port)
     print('### Press double Ctrl + C to stop\t')
     if glb.get_value('BL') is None:

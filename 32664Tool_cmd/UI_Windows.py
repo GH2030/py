@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UI_Windows.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.14.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.PortSet, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 413, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 413, 22))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -88,7 +88,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MAX32664-Tool v1.0"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MAX32664-Tool v1.1"))
         self.PortSet.setTitle(_translate("MainWindow", "串口设置"))
         self.ScanPortButton.setText(_translate("MainWindow", "扫描串口"))
         self.COMLabel.setText(_translate("MainWindow", "串口号"))

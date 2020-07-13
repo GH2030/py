@@ -24,6 +24,7 @@ import images_rc
 import download_fw
 import config as gl
 
+
 # from download_fw import MaximBootloader
 # import win32con
 # from win32process import SuspendThread, ResumeThread
@@ -93,6 +94,7 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.actionHelp.triggered.connect(self.show_about)
 
         # self.LogBrowser.document().setMaximumBlockCount(100)
+
     def scom(self):
         if self.COMCB.currentText():
             print('当前串口：' + self.COMCB.currentText())
@@ -172,11 +174,11 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.my_thread.working = True
                 self.my_thread.start()
-                print('下载线程开始执行')
+                if self.my_thread.working:
+                    print('下载线程开始执行')
             else:
                 self.SendButton.setText('下载文件')
-                print('下载线程已停止')
-                gl.set_value('stop', True)
+                # gl.set_value('stop', True)
                 # print(self.COMCB.currentText())
                 # download_fw.co_32664(self.COMCB.currentText(), self.FileLineEdit.text())
                 # download_fw.MaximBootloader.co_port(MSBLF, COM)
@@ -186,10 +188,12 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.OpenFileButton.setEnabled(True)
                 self.my_thread.working = False
                 self.my_thread.terminate()
+                if not self.my_thread.working:
+                    print('下载线程已停止')
         else:
             if gl.get_value('com_is_open') is None or gl.get_value('com_is_open') == 0:
                 QMessageBox.information(self, "Port Info", "没有选择串口")
-            if gl.get_value('file_is_open') is None or gl.get_value('file_is_open') == 0:
+            elif gl.get_value('file_is_open') is None or gl.get_value('file_is_open') == 0:
                 QMessageBox.information(self, "File Info", "没有选择文件")
 
     def exit_tool(self):
