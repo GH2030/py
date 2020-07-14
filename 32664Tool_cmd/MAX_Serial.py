@@ -56,9 +56,9 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
     def init(self):
         print('程序启动...\n'
               '使用说明：\n'
-              '1.点击‘扫描串口‘按钮，选择对应串口;\n'
-              '2.点击‘选择文件’按钮，选择msbl文件（文件路径不要有空格）;\n'
-              '3.点击’下载文件‘按钮下载文件（可再次点击停止下载），等待执行结束。\n')
+              '1.点击‘扫描串口’按钮，选择对应串口；\n'
+              '2.点击‘选择文件’按钮，选择.msbl文件；\n'
+              '3.点击‘下载文件’按钮下载文件（可再次点击停止下载），等待执行结束。\n')
         # 串口配置
         """
         self.BAUDCB.addItem('115200')
@@ -108,7 +108,8 @@ class MAX_Serial(QtWidgets.QMainWindow, Ui_MainWindow):
         self.OpenFileButton.setEnabled(True)
         self.my_thread.working = False
         self.my_thread.terminate()
-        if self.my_thread.working:
+        # print(self.my_thread.working)
+        if not self.my_thread.working:
             print(s)
 
     # 串口检测
@@ -238,6 +239,7 @@ class SerialThread(QThread):  # 线程类
             download_fw.fls_32664(gl.get_value('COM'), gl.get_value('MSBLF'))
             self.my_signal.emit('下载线程执行结束')
             self.working = False
+            gl.set_value('BL', None)
             break
 
 

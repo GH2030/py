@@ -81,9 +81,6 @@ class EBL_MODE:
     USE_GPIO = 1
 
 
-stop = False
-
-
 class MaximBootloader(object):
     def __init__(self, msbl_file, port):
         self.ser = serial.Serial()
@@ -349,9 +346,10 @@ class MaximBootloader(object):
             self.exit_from_bootloader()
 
         print(Fore.GREEN + 'SUCCEED...')
-        self.close()
+        # self.set_host_operating_mode(0)
+        # self.close()
         # sys.exit(0)
-        # self.quit()
+        self.quit()
 
     def bootloader_continuous_download(self, reset):
         print('\nDownloading msbl file')
@@ -580,6 +578,7 @@ def fls_32664(port, msblfile):
             #     bl.bootloader(BL_MODE.CONTINUES_DOWNLOAD, args.reset)
             # else:
             bl.bootloader(BL_MODE.SINGLE_DOWNLOAD, True)
+            # return
 
         except KeyboardInterrupt:
             # print(result)
@@ -605,6 +604,7 @@ def fls_32664(port, msblfile):
             #     bl.bootloader(BL_MODE.CONTINUES_DOWNLOAD, args.reset)
             # else:
             bl.bootloader(BL_MODE.SINGLE_DOWNLOAD, True)
+            # return
 
         except KeyboardInterrupt:
             # print(result)
